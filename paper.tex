@@ -1,24 +1,6 @@
-% THIS IS SIGPROC-SP.TEX - VERSION 3.1
-% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
-% APRIL 2009
-%
-% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
-% LaTeX2e document class file for Conference Proceedings submissions.
-% ----------------------------------------------------------------------------------------------------------------
-% This .tex file (and associated .cls V3.SP) *DOES NOT* produce:
-%       1) The Permission Statement
-%       2) The Conference (location) Info information
-%       3) The Copyright Line with ACM data
-%       4) Page numbering
-% ---------------------------------------------------------------------------------------------------------------
-% It is an example which *does* use the .bib file (from which the .bbl file
-% is produced).
-% REMEMBER HOWEVER: After having produced the .bbl file,
-% and prior to final submission,
-% you need to 'insert'  your .bbl file into your source .tex file so as to provide
-% ONE 'self-contained' source file.
-
-\documentclass{acm_proc_article-sp}
+%\documentclass{acm_proc_article-sp}
+\documentclass[11pt]{article}
+\usepackage{fullpage}
 
 \usepackage{amsmath}
 \usepackage{mathptmx}
@@ -49,32 +31,32 @@
 
 \title{Trajectory Mosaicing}
 
-\numberofauthors{2} %  in this sample file, there are a *total*
-\author{
-\alignauthor
-E.~Packer\\
-       \affaddr{IBM Research - Haifa}\\
-       \affaddr{University of Haifa Campus}\\
-       \affaddr{Haifa, Israel 3498825}\\
-\alignauthor
-S.~Pupyrev, A.~Efrat, S.~Kobourov \\
-       \affaddr{Department of Computer Science}\\
-       \affaddr{University of Arizona}\\
-\affaddr{Tucson, AZ, USA}
-}
+%\numberofauthors{2} %  in this sample file, there are a *total*
+%\author{
+%\alignauthor
+%E.~Packer\\
+%       \affaddr{IBM Research - Haifa}\\
+%       \affaddr{University of Haifa Campus}\\
+%       \affaddr{Haifa, Israel 3498825}\\
+%\alignauthor
+%S.~Pupyrev, A.~Efrat, S.~Kobourov \\
+%       \affaddr{Department of Computer Science}\\
+%       \affaddr{University of Arizona}\\
+%\affaddr{Tucson, AZ, USA}
+%}
 
 \maketitle
 \begin{abstract}
-The ubiquitous presence of location-based devices and sensors has made it easier to collect data on the trajectories of people, animals, vehicles, and objects. The benefits of collecting this data are clear, whether for traffic analysis, social analytics, business optimization, or safety measures. Unfortunately, much of the data on these trajectories is incomplete or unreliable, and cannot be used ‘as is’ for further analytics. We introduce new methods to combine and process trajectory data. In the core of this work we present a system to analyze ant trajectories annotated manually. Our work reviews the difficulties and challenges that arise in this scenario and presents efficient solutions 
+The ubiquitous presence of location-based devices and sensors has made it easier to collect data on the trajectories of people, animals, vehicles, and objects. The benefits of collecting this data are clear, whether for traffic analysis, social analytics, business optimization, or safety measures. Unfortunately, much of the data on these trajectories is incomplete or unreliable, and cannot be used ‘as is’ for further analytics. We introduce new methods to combine and process trajectory data. In the core of this work we present a system to analyze ant trajectories annotated manually. Our work reviews the difficulties and challenges that arise in this scenario and presents efficient solutions
 with which we obtained satisfactory results. These solutions which relate
 to trajectories and deal with clustering and matching are generic enough
 to be used in many systems that require trajectory analysis. In particular, systems that process incomplete data or suffer from reasonable noise could benefit from our solutions. We implemented the methods and present experiments with real-world data. TODO{ It would be good to say something here about the results to provide credibility and give people a reason to read the paper]}
 
 \end{abstract}
 
-\category{H.4}{Information Systems Applications}{Miscellaneous}
-\terms{Algorithms}
-\keywords{Trajectories, Matching}
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
+%\terms{Algorithms}
+%\keywords{Trajectories, Matching}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +74,8 @@ Numerous technologies are available to provide location data, including GPS, WiF
 \TODO{Move the details to a subsequent section} Let a {\em trajectory} be defined as a polyline in $\reals^2$, represented by
 a sequence $p_1, \dots, p_m$ of $m$ points. In addition to the spatial
 coordinates, temporal information might also be available.
-Specifically, each point $p_i$ is associated with a normalized timestamp $0 \le t_i \le 1$ and we assume that the 
-trajectory is monotone in time: for each $1 < i < j < T$, it holds $t_1 = 0 < t_i < t_j < t_T = 1$. Hence, a 
+Specifically, each point $p_i$ is associated with a normalized timestamp $0 \le t_i \le 1$ and we assume that the
+trajectory is monotone in time: for each $1 < i < j < T$, it holds $t_1 = 0 < t_i < t_j < t_T = 1$. Hence, a
 trajectory can be viewed as a monotone (with respect to time) polyline in the
 $\reals^3$ domain with the coordinates $x$, $y$ and $t$.
 In our settings, we usually parameterize (or normalize) the timestamp along the
@@ -103,17 +85,17 @@ interval $[0, 1]$.
 %between $u$ and $v$ at the timestamp $t$. Then the distance between $u$ and $v$
 % is $$D(u, v) = \max_{t \in [0,1]} D(u(t), v(t)).$$
 
-Many applications use the trajectory data as historical resources, including statistics about outdoor activities, 
-common route analysis, and traffic congestion analysis. Other applications use the data on-the-fly for current route 
+Many applications use the trajectory data as historical resources, including statistics about outdoor activities,
+common route analysis, and traffic congestion analysis. Other applications use the data on-the-fly for current route
 statistics, the analysis of  current relationships with other trajectories, and more.
 Trajectories for ships, airplanes, animals, and even people are constantly being collected
 and used in academic and industrial research.
 
-The availability of trajectory data offer unique opportunities to gain insight. For example, analyzing the complicated relationships 
+The availability of trajectory data offer unique opportunities to gain insight. For example, analyzing the complicated relationships
 among trajectories can help alleviate traffic congestion and thus save time and money, while decreasing pollution.
 %Another related problem is route optimization. Given the source and destination, it could be valuable to decide both the route taken by the vehicles as well as scheduling its route stations. Last but not least, today's available communication allows real time transportation on demand (taxis, merchandize shipping, emergency vehicles, etc.). Given services and requests, it would be important to optimize the routes and their scheduling in real-time.
 Trajectory data can also be used to examine human mobility and social patterns~\cite{isaacman10}. Such understanding can,
-in turn, help advance solutions to large-scale societal problems in fields as varied as telecommunications, ecology, 
+in turn, help advance solutions to large-scale societal problems in fields as varied as telecommunications, ecology,
 epidemiology, and urban planning. For example, knowing how large populations of people move about can help determine their carbon footprint and subsequently guide policies intended to reduce that footprint.
 
 %Trajectory data, together with growing demand to analyze such data, pose many
@@ -139,7 +121,7 @@ further processing. First, the required trajectories span long periods
 of time, which are much longer than a typical volunteer would be able to comfortably annotate. Hence, we need
 to stitch together different annotated section. This requires allowing some overlap to enable the stitching.
 Morever, since the volunteers have some control over the annotation process, their
-annotations may not be sampled at the same rates or may have gaps. Second, volunteers make mistakes. Beyond innocent mistakes, there are also cases of malicious or purposeful mis-annotation. Thus, it is desirable to obtain several trajectories 
+annotations may not be sampled at the same rates or may have gaps. Second, volunteers make mistakes. Beyond innocent mistakes, there are also cases of malicious or purposeful mis-annotation. Thus, it is desirable to obtain several trajectories
 of the same ant for each period of time. Another difficulty is that since we
 cannot predetermine the identity of each ant, we cannot fit the annotations to specific ants. This fact complicates
 our work greatly as we need to decide which annotation belongs to which ant. Since our
@@ -155,11 +137,11 @@ ultimate goal is to identify the complete trajectories of the ants, our work foc
   \item {\bf Matching trajectories.} To generate the complete trajectories, we
   must decide which sub-trajectories to stitch together for specific periods of
   time.
-  We do this by matching the common routes on the overlapping parts. 
+  We do this by matching the common routes on the overlapping parts.
   \item {\bf Measuring the distance between trajectories.} In order to cluster
   and match the trajectories, we need to use a metric that measures their
   distances from each other.
-\end{enumerate} 
+\end{enumerate}
 
 While we use prior work that is appropriate for our needs for items 1 and
 2, we devised new techniques for items 3 and 4. We note that these techniques are
@@ -171,7 +153,7 @@ algorithm~\cite{hung} after computing distances between the common routes.
 However, computing the distance measure is costly, and in particular redundant if one can disqualify the pairing potential of far trajectories
 Fast. We use two complementary techniques to quickly filter out far enough
 trajectories: locality sensitive hashing (LSH) and R-tree augmentation. Locality Sensitive Hashing (LSH) filters out far
-trajectories, but due to its nature it may skip some pairs (see Section~\ref{SSS} for more details).\TOTO{Say why LSH skips in its section}. Augmentation of the well-known R-tree algorithm helps us further disqualify far trajectories that were skipped by LSH.
+trajectories, but due to its nature it may skip some pairs (see Section~\ref{SSS} for more details).\TODO{Say why LSH skips in its section}. Augmentation of the well-known R-tree algorithm helps us further disqualify far trajectories that were skipped by LSH.
 
 There are many applications that can benefit from a speed up
 heuristic of this type. \TODO{examples} In some of these applications the trajectory of the same
@@ -186,19 +168,19 @@ To compute the distance measure between trajectories, we use the popular
 ignoring their associated timestamps. Clearly, there are cases when we might be interested in computing this distance when some of the samples are
 associated with a timestamp and some are not (see Section~\ref{sec:ptas}).
 We augmented the \Frechet{} distance computation to support this kind
-of data and thus generalize the computation. Because the ant trajectory data has associated timestamps, 
+of data and thus generalize the computation. Because the ant trajectory data has associated timestamps,
 we show how we can interpolate the trajectories with samples that have no timestamp
 and achieve potentially better distance quality.
 
-% In some scenarios, objects do not share identities. This could be due to privacy, security, or other reasons. Then the task of merging data 
+% In some scenarios, objects do not share identities. This could be due to privacy, security, or other reasons. Then the task of merging data
 % from several source becomes more challenging as the the trajectories cannot be matched by merely checking their identities.
-% There are applications that make good use of trajectory matching, such as calibrating two video cameras (direction, focal length, etc.) 
+% There are applications that make good use of trajectory matching, such as calibrating two video cameras (direction, focal length, etc.)
 % whose goal is to track the same object.
-% The problem of matching pairs of trajectories naturally arises in the context of extracting accurate  trajectories of ants from many 
-% (possibly inaccurate) input trajectories annotated by volunteers (citizen scientists)~\cite{ants}. In this setting, the volunteers play 
-% an online game showing a video of an ant colony and indicate the trajectory of specified ants via mouse clicks (a task that is commonly 
+% The problem of matching pairs of trajectories naturally arises in the context of extracting accurate  trajectories of ants from many
+% (possibly inaccurate) input trajectories annotated by volunteers (citizen scientists)~\cite{ants}. In this setting, the volunteers play
+% an online game showing a video of an ant colony and indicate the trajectory of specified ants via mouse clicks (a task that is commonly
 % challenging for computer vision techniques).
-% To increase the reliability of such annotation, each ant's trajectory is annotated by two or more scientists. Hence, a robust algorithm 
+% To increase the reliability of such annotation, each ant's trajectory is annotated by two or more scientists. Hence, a robust algorithm
 % for determining which trajectories (annotated by different citizen scientists) refer to the same ant is needed.
 
 %In several situations multiple sources produce trajectory data (see Section~\ref{sec:appl} for examples). In many cases, the trajectories is simply a collection of location and (possibly) timestamps, where no ID is associated with it. Matching trajectories that belong to the same route of the specific entity may be important for several purposes: validation, noise reduction, MORE? However, when IDs are unknown and where the two resources do not produce identical information, matching trajectories becomes a challenging task. Minimizing the matching error will be crucial to produce reliable data for subsequent applications.
@@ -208,32 +190,104 @@ and achieve potentially better distance quality.
 %Having multiple locating technologies available may be utilized to decrease the level of uncertainty in the data as the location signals are noisy and sometimes get lost. Having more than one source, it may be possible to use statistical heuritics to increase the lcoation confidence level (for instance taking the average location). Moreover, when trajectories are given, it will be more useful to apply statistical methods on the trajectories rather then working on the samples separetly. The main reason is that the effect of a sudden and short term noise will decrease when treated as a trajectory datum.
 
 % In this paper we propose novel methods for computing a good matching between two sets of trajectories.
-% On a high level, the task is divided into two parts: computing a similarity measure between a pair of trajectories and partitioning 
+% On a high level, the task is divided into two parts: computing a similarity measure between a pair of trajectories and partitioning
 % the trajectories into pairs in a way that optimizes some criteria. We define a
-% {\it distance} for a pair of trajectories and propose a measure with which we globally minimize the total cost of the matching. 
-% Specifically, we focus on the \Frechet{} distance for computing the distance between trajectories and use a matching algorithm that 
-% minimizes the maximum distance between any pair of matched trajectories. As the naive implementation of the algorithm is computationally 
-% expensive, we describe two techniques for speeding up the computation. The first technique is based on the idea of 
-% \emph{locality-sensitive hashing}, which filters out pairs of trajectories that are ``far'' from each other. From the remaining pairs, 
+% {\it distance} for a pair of trajectories and propose a measure with which we globally minimize the total cost of the matching.
+% Specifically, we focus on the \Frechet{} distance for computing the distance between trajectories and use a matching algorithm that
+% minimizes the maximum distance between any pair of matched trajectories. As the naive implementation of the algorithm is computationally
+% expensive, we describe two techniques for speeding up the computation. The first technique is based on the idea of
+% \emph{locality-sensitive hashing}, which filters out pairs of trajectories that are ``far'' from each other. From the remaining pairs,
 % we construct a weighted bipartite graph and find a \emph{bottleneck}
 %  matching~--- a perfect matching that minimizes the maximum weight of a matched
 %  edge~\cite{Efrat01}. To this end, we suggest an algorithm in which computation of the \Frechet{} distance is optimized.
 
-The remainder of this paper is organized as follows. In the next section we discuss related work. 
+The remainder of this paper is organized as follows. In the next section we discuss related work.
 In Section~\ref{sec:ant} we present the
 system that analyzes ant trajectories. In Section~\ref{sec:tec} we present
 the techniques we use for trajectory analysis. In Section~\ref{sec:alg} we
 show how we solve the main problem that is described in Section~\ref{sec:ant}.
 In particular, we describe how we cluster the trajectories, compute their common
-Routes, and match the latter to create the final results. 
+Routes, and match the latter to create the final results.
 In Section~\ref{sec:exper} we provide experimental results and present several applications. We conclude and discuss directions for future work in Section~\ref{sec:conc}.
 
+\subsection{Problem Description}
+\label{sec:ant}
+Our motivation comes from biologists who wish to discover longitudinal
+behavioral patterns in ant colonies. The trajectories of individual ants in a colony extracted from videos are
+needed to answer questions such as how often do ants communicate, what different roles do ants play in
+a colony, and how does interaction and communication affect the success or failure of a colony? Existing
+automated solutions are not good enough, and there is only so much data that even motivated students can
+annotate in the research lab.
+In the last few years it has been shown that citizen scientists can contribute to
+image processing tasks, such as the Galaxy Zoo project in which thousands of citizen scientists labeled
+millions of images of galaxies from the Hubble Deep Sky Survey and FoldIt in which online gamers
+helped to decode the structure of an AIDS protein~--- a problem which stumped researchers for 15 years.
+
+A similar approach has been recently applied for 
+extracting accurate ant trajectories from many (inaccurate) input
+trajectories contributed by citizen scientists~\cite{ants}. Although there are many generic 
+software tools for motion tracking and specific ones for insect tracking, even untrained humans 
+are better at this task. In this setting, volunteers (citizen scientists) interact with
+an online game showing a video of an ant colony; the goal is
+to generate a trajectory of a specified ant via mouse clicks.
+Unfortunately, the method suggested in \cite{ants} has several limitations.
+(say that there are errors and we need several people tracking the same ant)
+First, it relies on the assumption that all the contributed trajectories
+span the entire video, while in practice it is likely that citizen scientists 
+track ants only during short video segments. Hence, in order to
+reconstruct a complete ant trajectory, one needs to stitch together
+short pieces of overlapping trajectories; see Fig.~\ref{fig:stitch}.
+Second, 
+
+Equivalently, given partially
+overlapping trajectories, the problem is to identify trajectories
+corresponding to the same ant; see Fig.~\ref{fig:ex1}.
+
+\begin{figure}[htb]
+\centering
+    \includegraphics[height=5cm]{pics/stitching}
+	\caption{The input (left) is a set of red and blue trajectories. Trajectories of the same color span the same time period. The result (right) is combined black trajectories spanning the entire time period.}
+	\label{fig:stitch}
+\end{figure}
+
+
+Ant trajectories are generally extracted by volunteers who annotate (possibly inaccurate)
+input trajectories (for more details refer to~\cite{ants}). In this setting, the
+volunteers interact with an online game that plays a video of an ant colony and
+annotate the trajectory of specified ants via mouse clicks. This task is
+challenging for computer vision dur to the density and the interactions and collisions of the ants. Unfortunately, the trajectories annotated by the volunteers are not quite useful for
+further processing. First, the required trajectories span long periods
+of time, which are much longer than a typical volunteer would be able to comfortably annotate. Hence, we need
+to stitch together different annotated section. This requires allowing some overlap to enable the stitching.
+Morever, since the volunteers have some control over the annotation process, their
+annotations may not be sampled at the same rates or may have gaps. Second, volunteers make mistakes. Beyond innocent mistakes, there are also cases of malicious or purposeful mis-annotation. Thus, it is desirable to obtain several trajectories
+of the same ant for each period of time. Another difficulty is that since we
+cannot predetermine the identity of each ant, we cannot fit the annotations to specific ants. This fact complicates
+our work greatly as we need to decide which annotation belongs to which ant. Since our
+ultimate goal is to identify the complete trajectories of the ants, our work focuses on solving the following problems.
+
+\begin{enumerate}
+  \item {\bf Clustering trajectories.} Cluster the trajectories so that each
+  cluster corresponds to a specific ant. In this regard, we relate to
+  trajectories for a similar period of time.
+  \item {\bf Computing common route.} After the trajectories have been clustered,
+  we need to compute a common route that represents the trajectories of the ants during
+  specific periods of time.
+  \item {\bf Matching trajectories.} To generate the complete trajectories, we
+  must decide which sub-trajectories to stitch together for specific periods of
+  time.
+  We do this by matching the common routes on the overlapping parts.
+  \item {\bf Measuring the distance between trajectories.} In order to cluster
+  and match the trajectories, we need to use a metric that measures their
+  distances from each other.
+\end{enumerate}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Related Work}
+\subsection{Related Work}
 \label{sec:rel}
 
 Two of the most popular analytics works on trajectories relate to measuring the similarity between trajectories
@@ -245,7 +299,7 @@ such as prediction, classification, identification of common patterns, computati
 trajectory, or identification of data characteristics ~\cite{Sankar2013}.
 In many cases it is interesting to cluster sub-trajectories. Lee et al.~\cite{Lee07trajectoryclustering}
 proposed a technique to segment the trajectories into a set of line segments and
-then group similar line segments. The distance function the define for the segments 
+then group similar line segments. The distance function the define for the segments
 depends on the perpendicular, parallel, and angle distances of the segments.
 Chen et al. ~\cite{Chen2013} used clustering techniques to compress
 trajectories. The goal was to compute a compact dictionary on sub-trajectories to minimize their
@@ -375,19 +429,19 @@ and failures. They introduce a variant of the edit distance measure that stands 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Problem Description}
-\label{sec:ant}
+
 
 \section{Techniques for Processing Trajectories}
 \label{sec:tec}
+
 \subsection{Distance Measures}
 \label{sec:dist}
-To measure the distance beween two trajectories, we chose a metric that relates to the maximum distances along them. We distinguish among three cases, each relates to the availability of
+To measure the distance between two trajectories, we chose a metric that relates to the maximum distances along them. We distinguish among three cases, each relates to the availability of
 timestamps on trajectory samples. In the first case, timestamps are not
 available; this is denoted by No Time Associated Setting (NTAS) and is described in Section~\ref{sec:ntas}. In the
 second case, timestamps are available; these are denoted by Time Associated Setting (TAS) and described in Section~\ref{sec:tas}. In the third case, timestamps are partially available; these are denoted by Partial Time Associated Setting (PTAS) and described in Section~\ref{sec:ptas}.
 Note that for ant trajectories, the time is generally available on the samples and thus corresponds to TAS. However, we show how we can improve the computation
-precision with PTAS, which is based on NTAS. 
+precision with PTAS, which is based on NTAS.
 We also describe other scenarios in which PTAS is useful.
 
 \subsubsection{No Time Associated Setting (NTAS)}
@@ -399,15 +453,15 @@ While computing the distance, the algorithm also assigns parametric timestamps o
 trajectories for man and dog are known in advance and both can only move forward
 along their trajectories.\footnote{The weak \Frechet{} distance is defined
 similarly with the difference that back tracking is allowed.} The \Frechet{}
-distance is then the length of the shortest leash between the man and the dog that allows them to get from the beginning to the end of their respective trajectories. The \Frechet{} distance can be obtained by parameterizing the trajectories optimally. Mathematically, 
+distance is then the length of the shortest leash between the man and the dog that allows them to get from the beginning to the end of their respective trajectories. The \Frechet{} distance can be obtained by parameterizing the trajectories optimally. Mathematically,
 the \Frechet{} distance is defined as $$D_F(u, v) = \inf_{\alpha,\beta} \max_{t
-\in [0,1]} d(u(\alpha(t)), v(\beta(t))),$$ where $u$ and $v$ are the trajectories, $d$ denotes a distance function and $\alpha$ and $\beta$ range over 
+\in [0,1]} d(u(\alpha(t)), v(\beta(t))),$$ where $u$ and $v$ are the trajectories, $d$ denotes a distance function and $\alpha$ and $\beta$ range over
 all monotone parameterizations.
 
 For a given $\gamma$, we can check whether the \Frechet{} distance between two
 trajectories $u$ and $v$ is upper bounded by $\gamma$ as follows.
-Define a two dimensional grid $H = [0,1] \times [0,1]$. The value in each point in the grid, $H(t_1, t_2)$, $0 \le t_1,t_2 \le 1$ is either {\it valid} if the distance between $u(t_1)$ 
-and $v(t_2)$ (the points on $u$ and $v$ corresponding to the parameterizations $t_1, t_2$) is smaller than $\gamma$; otherwise it is {\it invalid}. The grid defines a {\it free space diagram} that indicates the validity of the locations. 
+Define a two dimensional grid $H = [0,1] \times [0,1]$. The value in each point in the grid, $H(t_1, t_2)$, $0 \le t_1,t_2 \le 1$ is either {\it valid} if the distance between $u(t_1)$
+and $v(t_2)$ (the points on $u$ and $v$ corresponding to the parameterizations $t_1, t_2$) is smaller than $\gamma$; otherwise it is {\it invalid}. The grid defines a {\it free space diagram} that indicates the validity of the locations.
 It follows that $D_F(u, v) \le \gamma$ if and only if there exists a
 weakly monotone path from $[0,0]$ to $[1,1]$ in $H$ passing through valid grid
 points; see Fig.~\ref{fig:conf}.
@@ -421,22 +475,20 @@ to parameterize the curves so the distance between any two matched points is alw
 	\label{fig:conf}
 \end{figure}
 
-\vspace{1cm}
-
 In order to find $D_F(u, v)$, one may perform a binary search over the values of
 $\gamma$, finding the minimum value for which a valid path exists.
 Unfortunately, the free space diagram is defined with conic arcs and thus must support a range of queries on arrangements of conic arcs, which is not easy to implement and costly to use.
 
 The {\it discrete} \Frechet{} distance is a variant in which only discrete
-points (or stations) along the trajectories are considered. In this case, the \Frechet{} distance corresponds to a sequence 
+points (or stations) along the trajectories are considered. In this case, the \Frechet{} distance corresponds to a sequence
 of steps done on the two trajectories: in each we advance from a station to its
-subsequent point on at least one trajectory. 
-The discrete \Frechet{} distance is the maximum distance between any pair of stations considered in this 
+subsequent point on at least one trajectory.
+The discrete \Frechet{} distance is the maximum distance between any pair of stations considered in this
 parameterization. Note that the discrete \Frechet{} distance gives an upper
 bound on the continuous variant and in many cases is relatively close to it.
 
 For a given $\gamma$, we query whether the discrete \Frechet{} distance is
-smaller than $\gamma$ as follows. Let $u$ and $v$ be two trajectories. We build a two-dimensional matrix M such that 
+smaller than $\gamma$ as follows. Let $u$ and $v$ be two trajectories. We build a two-dimensional matrix M such that
 $M(i,j) = 1$ if and only if $d(u_i, v_j) < \gamma$, where $d$ is the Euclidean
 distance and $u_i, v_j$ are the $i$-th and $j$-th points of $u$ and $v$,
 respectively. Next, we test if there is a weakly monotone path of cells with
@@ -452,13 +504,12 @@ and thus the existence of such a path is the result of the query.
 %{\bf SK: do we need to provide so many reasons for using the discrete version? it sounds like we think we shouldn't be doing it, so we are giving many excuses why we do it.}
 
 
-A simple algorithm for computing the discrete \Frechet{} is to perform 
+A simple algorithm for computing the discrete \Frechet{} is to perform
 a binary search over $\gamma$ and find the minimum $\gamma$ valid for the
-two trajectories as described above. 
+two trajectories as described above.
 The algorithm takes $O(m^2 \log D_{max})$ time, where $m$ is the link-length of
 a trajectory and $D_{max} = \max_{u\in S_1, v\in S_2} D(u, v)$ is the largest distance between any two points in the input.
-Note that the above algorithm is not asymptotically optimal; Aggarwal
-et al.~\cite{agarwal2012computing} described a more efficient algorithm.
+Note that the above algorithm is not asymptotically optimal; Agarwal~et~al.~\cite{agarwal2012computing} described a more efficient algorithm.
 
 As the discrete version is faster to compute and easier to implement than
 the continuous one, we use it in the remainder of
@@ -469,41 +520,41 @@ this work.
 When timestamps are associated with the trajectory samples, trajectories can be
 represented as polylines in $\reals^3$ (with $x, y$ and $t$ coordinates).
 To compute the distance, we simply sweep the $t = C$ plane for the normalized
-parameterizations $t = 0$ to $t = 1$, processing segments intersected simultaneously by the sweeping plane. For each 
+parameterizations $t = 0$ to $t = 1$, processing segments intersected simultaneously by the sweeping plane. For each
 such pair, we compute the maximum distance. The maximum value obtained over all
 pairs of segments is the similarity measure of the trajectories. It is easy to
 verify that the processing time is linear on the trajectory sizes as we traverse both trajectories simultaneously once.
 
 \subsubsection{Partial Time Associated Setting (PTAS)}
 \label{sec:ptas}
-This case is a generalization of TAS and NTAS. Here a point along an input trajectory may or may not be associated 
+This case is a generalization of TAS and NTAS. Here a point along an input trajectory may or may not be associated
 with a timestamp. The idea is to solve this variant by modifying the
-algorithm for NTAS, restricting the free space diagram with blocking rectangles. Let $T_1$ and $T_2$ be the 
+algorithm for NTAS, restricting the free space diagram with blocking rectangles. Let $T_1$ and $T_2$ be the
 sequences of timestamps of both trajectories sorted by time. Consider two
 timestamps $t_1 \in T_1$ and $t_2 \in T_2$ so that $t_1 < t_2$. It follows that
 $T_2$ cannot reach $t_2$ before $T_1$ reaches $t_1$.
-This constraint defines a {\it forbidden rectangle} in the free space diagram; see Figure~\ref{fig:rects}. 
+This constraint defines a {\it forbidden rectangle} in the free space diagram; see Figure~\ref{fig:rects}.
 Given $T_1$ and $T_2$, we process them by increasing timestamps. For each
 timestamp visited on one of the trajectories $v$, we take the recent one on the
-other trajectory and find the corresponding rectangle. Then we subtract those rectangles from the free space 
+other trajectory and find the corresponding rectangle. Then we subtract those rectangles from the free space
 diagram to get an instance in which we search for a weakly monotone path. It is
 important to observe that each trajectory samples is associated with at most two rectangles that correspond to
 constraints with two samples on the other trajectory, appearing before and after
 it. Thus, the number of constraining rectangles is linear and does not affect
-the complexity of the free space diagram. 
+the complexity of the free space diagram.
 These ideas hold for both the continuous and the discrete versions with the
 necessary changes. Detecting the samples inside the forbidden rectangles in the
 discrete version can be done in $O(T^3)$ time (recall that $T$ is the trjectory
-link length), since one needs to check $O(T^2)$ pairs against $O(T)$ rectangles. However, by using arrangements of segments in $\reals^2$, we can improve the time 
-complexity to $O(T^2 \log T)$, relying on the fact that testing the location of a point within the constraining 
-rectangles takes $O(\log T)$ time. Based on the characteristics of the forbidden rectangles, they form 
+link length), since one needs to check $O(T^2)$ pairs against $O(T)$ rectangles. However, by using arrangements of segments in $\reals^2$, we can improve the time
+complexity to $O(T^2 \log T)$, relying on the fact that testing the location of a point within the constraining
+rectangles takes $O(\log T)$ time. Based on the characteristics of the forbidden rectangles, they form
 two staircase structures in the free space, touching the bottom-right and the
 top-left of the free space respectively; see Fig.~\ref{fig:rects}.
 
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.98\linewidth]{pics/forb_rect2.jpg}
-	\caption{The free space diagram for a pair of trajectories $a$ and $b$ overlayed with forbidden 
+	\caption{The free space diagram for a pair of trajectories $a$ and $b$ overlayed with forbidden
 	rectangles (in green) that contribute to the invalid parameterization (the red
 	areas). The parameterization of the trajectories are depicted below.}
 	\label{fig:rects}
@@ -514,12 +565,12 @@ when the data is not reliable or when the sensors that report the location/times
   to save energy and thus report only partial data.
 It can also be useful for improving the precision of the distance as we
 describe next. Given two trajectories with associated timestamps, instead of
-computing the distance as proposed in Section~\ref{sec:tas}, we add sample points in between given sample points. 
+computing the distance as proposed in Section~\ref{sec:tas}, we add sample points in between given sample points.
 If we knew the real timestamps of those new points, we could clearly compute a
 possibly more precise \Frechet{} distance with TAS. Nevertheless, by using PTAS,
 where only some original points have associated timestamps, we will
-find optimal parametric time on the new points, potentially improving the 
-precision of the distance. 
+find optimal parametric time on the new points, potentially improving the
+precision of the distance.
 This case is even more interesting when we do not model the movement between
 samples linearly, but rather with non-linear techniques (e.g., Bazier curves or
 high order polynomials). Then we could take points along the approximating
@@ -539,7 +590,7 @@ curves to improve the computation.
 % It is easy to see that the problem of finding a perfect matching minimizing the maximum weight
 % can be solved in polynomial time using the classical Hopcroft-Karp algorithm~\cite{matching} or
 % by finding a maximum flow in $G$~\cite{din}.
-% 
+%
 % Let us discuss complexity of the approach. Suppose computing a distance for a pair of trajectories requires
 % $R$ steps.
 % As discussed earlier, $R = O(T)$ for TAS, $R = O(T^2 \log D_{max})$ for NTAS,
@@ -667,7 +718,7 @@ desirable to filter out most of the false pairs fast, saving the
 time for computing their distances. In the previous section we proposed
 the Locality-Sensitive Hashing to efficiently filter out many far pairs.
 As there is no guarantee that it will filter out any far pairs, we use another technique
-based on a geometric data structure that resembles the well known R-tree 
+based on a geometric data structure that resembles the well known R-tree
 to filter out far pairs.
 We describe this data structure as a part of the complete matching algorithm
 and refer to it as \emph{Sequential Bounding Box Balanced Tree} (SBBBT for short). This technique
@@ -675,7 +726,7 @@ is applicable for NTAS and PTAS (but not for TAS). Its main usage is to bound ea
 trajectory in a hierarchical fashion. In the following, we assume that a
 bounding box is always axis-aligned.
 
-%\TODO{bottleneck matching, as defined, produces poor results; need to compute 
+%\TODO{bottleneck matching, as defined, produces poor results; need to compute
 %a lexicographic bottleneck matching}
 
 \begin{figure}[htb]
@@ -693,15 +744,15 @@ bounding box is always axis-aligned.
 \begin{definition}
 A {\em Sequential Bounding Box Balanced Tree (SBBBT))} is a binary tree
 associated with a trajectory and constructed as follows. The root contains the bounding box of the
-trajectory. The left and right children of the root correspond to the first and the second part of the trajectory. 
-Each child contains the bounding box of the corresponding trajectory part. The rest of the tree is defined 
+trajectory. The left and right children of the root correspond to the first and the second part of the trajectory.
+Each child contains the bounding box of the corresponding trajectory part. The rest of the tree is defined
 recursively in the same manner. Each level of the tree (that is an order
-of nodes of the same height) contains corresponding pointers to allow its traversal. See Figure ~\ref{fig:sbbbt} for an illustration of SBBBT. 
+of nodes of the same height) contains corresponding pointers to allow its traversal. See Figure ~\ref{fig:sbbbt} for an illustration of SBBBT.
 \end{definition}
 
 Algorithm~\ref{algo:main} is the high level algorithm for computing the
 matching. We first construct the SBBBT with $\log m$ levels for every
-trajectory. Then we use binary search to find the minimum value of $\gamma$ for which there exists a perfect 
+trajectory. Then we use binary search to find the minimum value of $\gamma$ for which there exists a perfect
 matching with all distances between matched trajectories less than $\gamma$.
 We use SBBBT to construct the graph that we inject into the perfect matching
 algorithm. It is easy to see that the matching corresponding to the smallest
@@ -737,7 +788,7 @@ such $\gamma$ is a bottleneck matching.
   }
 \end{algorithm}
 
-Note that the foreach loop in the algorithm is responsible
+Note that the loop in the algorithm is responsible
 for determining whether a pair of trajectories is a candidate for a matching and,
 if so, it is inserted into $G$. We execute this as follows. Consider a SBBBT tree
 constructed for a trajectory $u$. For any level $l \ge 0$, let $SBBBT(u, l)$ be a set of bounding boxes
@@ -756,12 +807,12 @@ for any level $l\ge 0$ exceeds $\gamma$, the \Frechet{} distance between
 $u$ and $v$ also exceeds $\gamma$, which is the \Frechet{} distance of the trajectories.
 Using this observation, we can check whether $D_F(u, v) \le \gamma$ by
 traversing the trees as follows.
-If $D_F(SBBBT(u, 0), SBBBT(v, 0)) > \gamma$, then the distance between $u$ and $v$ also exceeds $\gamma$; 
+If $D_F(SBBBT(u, 0), SBBBT(v, 0)) > \gamma$, then the distance between $u$ and $v$ also exceeds $\gamma$;
 otherwise, proceed with the next level and so on. (See
 Figure ~\ref{fig:valid_paths}).
 Only if the distance is less than $\gamma$ at all levels, we
 compute the \Frechet{} distance of the corresponding trajectories. Note that the
-computation cost increases as we descend in the tree. Hence, disqualifying the trajectories early results in significant savings in the 
+computation cost increases as we descend in the tree. Hence, disqualifying the trajectories early results in significant savings in the
 running time.
 
 To further save time, we store the following information for pairs of
@@ -771,7 +822,7 @@ instead of recomputing it during subsequent iterations. (2)~If the pair is
 filtered out for some $\gamma$ (that is, the \Frechet{} distance is
 proven to be greater than $\gamma$), then we do not check it again for larger
 values of $\gamma$. Overall, in the worst case, the algorithm for computing a
-bottleneck matching has the same complexity as the brute-force algorithm. However, we found significant speedup 
+bottleneck matching has the same complexity as the brute-force algorithm. However, we found significant speedup
 in practice, as discussed in Section~\ref{sec:exper}.
 
 
@@ -782,35 +833,28 @@ in practice, as discussed in Section~\ref{sec:exper}.
 	\includegraphics[width=0.49\linewidth]{pics/sq5_with_path.jpg}
 	\includegraphics[width=0.49\linewidth]{pics/sq4_with_path.jpg}
 	\caption{Computing the \Frechet{} distance with SBBBT.
-Decreasing levels (from top-left clockwise) of SBBBT are depicted on the parameterization diagram for a pair of trajectories. Red cells 
+Decreasing levels (from top-left clockwise) of SBBBT are depicted on the parameterization diagram for a pair of trajectories. Red cells
 represent forbidden parameterization values. In this example, there is a
 weakly monotone path from bottom-left to top-right in all levels (in blue). }
 	\label{fig:valid_paths}
 \end{figure}
 
 % We next describe how we check for the existence of a perfect matching for a
-% giving value $\gamma$ in Algorithm~\ref{algo:main}. First, we compute a bipartite graph $G$ with $2n$ vertices in which an edge between 
-% two trajectories is present if and only if the trajectories can be potentially matched. To this end, we compute the \Frechet{} distance 
+% giving value $\gamma$ in Algorithm~\ref{algo:main}. First, we compute a bipartite graph $G$ with $2n$ vertices in which an edge between
+% two trajectories is present if and only if the trajectories can be potentially matched. To this end, we compute the \Frechet{} distance
 % between $SBBBT(u, l)$ and $SBBBT(v, l)$ for levels $0 \le l \le 3$, and add an edge $(u, v)$ to $G$ if
 % the distance is less than $\gamma$. Clearly, this operation can be done efficiently since the number
-% of boxes at the levels is relatively small. We expect to filter out most of the pairs of trajectories at this step, and construct a sparse 
+% of boxes at the levels is relatively small. We expect to filter out most of the pairs of trajectories at this step, and construct a sparse
 % $G$. Second, we check whether there exists a perfect matching in $G$.
 % For this purpose, we use the maximum flow algorithm~\cite{din} by adding source and sink vertices to $G$,
 % and then iteratively finding augmenting paths in the graph. During the search for an augmenting path,
-% we use the corresponding edge $(u, v)$ if the \Frechet{} distance between $u$ and $v$ is less than $\gamma$. Here, we again use the trees 
+% we use the corresponding edge $(u, v)$ if the \Frechet{} distance between $u$ and $v$ is less than $\gamma$. Here, we again use the trees
 % $SBBBT(u)$ and $SBBBT(v)$ to speed up the running time. We check up to $\log T$ levels
 % of the trees, where $T$ is the length of trajectories. We stress that the actual computation of the \Frechet{} distance
 % is performed only if $D_F(SBBBT(u, l), SBBBT(v, l)) \le \gamma$ for all $0 \le l \le \log T$.
 % If the maximum flow in $G$ is equal to $n$, then we conclude that there exists a perfect matching for the
 % current value $\gamma$.
 
-
-\begin{figure}[htb]
-\centering
-    \includegraphics[height=5cm]{pics/stitching}
-	\caption{The input (left) is a set of red and blue trajectories. Trajectories of the same color span the same time period. The result (right) is combined black trajectories spanning the entire time period.}
-	\label{fig:stitch}
-\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -821,7 +865,7 @@ weakly monotone path from bottom-left to top-right in all levels (in blue). }
 We evaluate our algorithms on four datasets. We start with a real-world collection
 of ant trajectories generated by citizen scientists. We then consider two
 datasets constructed from route data of vehicle trajectories.
-The last one is an artificial dataset that is designed to highlight 
+The last one is an artificial dataset that is designed to highlight
 some features and insights about our methods.
 
 \subsection{Citizen Science Trajectories}
