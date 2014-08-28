@@ -1,4 +1,3 @@
-%\documentclass{acm_proc_article-sp}
 \documentclass[11pt]{article}
 \usepackage{fullpage}
 
@@ -8,11 +7,14 @@
 \usepackage{verbatim}
 \usepackage{graphicx,subfigure}
 \usepackage{color}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage[textsize=footnotesize]{todonotes}
 \usepackage[boxed]{algorithm2e}
 \DontPrintSemicolon
 \SetArgSty{}
 
-\newcommand{\TODO}[1]{\textcolor{red}{(#1)}}
+%\newcommand{\TODO}[1]{\textcolor{red}{(#1)}}
 
 \newcommand{\reals}{{\textit I\!\hspace{-0.025em} R}}
 \newtheorem{theorem}{Theorem}[section]
@@ -27,25 +29,28 @@
 \newcommand{\Frechet}[0]{Fr\'{e}chet}
 \newcommand{\TMATCH}{\textsc{TMATCH}}
 
-\begin{document}
-
 \title{Trajectory Mosaicing}
 
-%\numberofauthors{2} %  in this sample file, there are a *total*
-%\author{
-%\alignauthor
-%E.~Packer\\
-%       \affaddr{IBM Research - Haifa}\\
-%       \affaddr{University of Haifa Campus}\\
-%       \affaddr{Haifa, Israel 3498825}\\
-%\alignauthor
-%S.~Pupyrev, A.~Efrat, S.~Kobourov \\
-%       \affaddr{Department of Computer Science}\\
-%       \affaddr{University of Arizona}\\
-%\affaddr{Tucson, AZ, USA}
+\author{E.~Packer%\inst{1}
+\and
+S.~Pupyrev%\inst{2}
+\and
+A.~Efrat%\inst{2}
+\and
+S.~Kobourov%\inst{2}
+}
+
+%\institute{
+%  IBM Research, University of Haifa Campus, Israel
+%\and
+%  Department of Computer Science, University of Arizona, Tucson, Arizona, USA
 %}
 
+\begin{document}
+\date{}
+
 \maketitle
+
 \begin{abstract}
 The ubiquitous presence of location-based devices and sensors has made it easier to collect data on the trajectories of people, animals, vehicles, and objects. The benefits of collecting this data are clear, whether for traffic analysis, social analytics, business optimization, or safety measures. Unfortunately, much of the data on these trajectories is incomplete or unreliable, and cannot be used ‘as is’ for further analytics. We introduce new methods to combine and process trajectory data. In the core of this work we present a system to analyze ant trajectories annotated manually. Our work reviews the difficulties and challenges that arise in this scenario and presents efficient solutions
 with which we obtained satisfactory results. These solutions which relate
@@ -68,10 +73,10 @@ to be used in many systems that require trajectory analysis. In particular, syst
 Due to the availability of location enabled devices, data with spatial attributes has become more and more widespread, increasing the demand for analytical tools.
 Numerous technologies are available to provide location data, including GPS, WiFi, cellolar and cameras. Moreover, many applications that make use of this location data have been developed and are available for mobile phones, navigation systems, and more.
 
-\TODO{Clearly state the problem here and the importance of your results}
+\todo{Clearly state the problem here and the importance of your results}
 
 {\it Trajectories} are arguably the most interesting pieces of information created by location services.
-\TODO{Move the details to a subsequent section} Let a {\em trajectory} be defined as a polyline in $\reals^2$, represented by
+\todo{Move the details to a subsequent section} Let a {\em trajectory} be defined as a polyline in $\reals^2$, represented by
 a sequence $p_1, \dots, p_m$ of $m$ points. In addition to the spatial
 coordinates, temporal information might also be available.
 Specifically, each point $p_i$ is associated with a normalized timestamp $0 \le t_i \le 1$ and we assume that the
@@ -116,11 +121,11 @@ Ant trajectories are generally extracted by volunteers who annotate (possibly in
 input trajectories (for more details refer to~\cite{ants}). In this setting, the
 volunteers interact with an online game that plays a video of an ant colony and
 annotate the trajectory of specified ants via mouse clicks. This task is
-challenging for computer vision dur to the density and the interactions and collisions of the ants. Unfortunately, the trajectories annotated by the volunteers are not quite useful for
+challenging for computer vision due to the density and the interactions and collisions of the ants. Unfortunately, the trajectories annotated by the volunteers are not quite useful for
 further processing. First, the required trajectories span long periods
 of time, which are much longer than a typical volunteer would be able to comfortably annotate. Hence, we need
 to stitch together different annotated section. This requires allowing some overlap to enable the stitching.
-Morever, since the volunteers have some control over the annotation process, their
+Moreover, since the volunteers have some control over the annotation process, their
 annotations may not be sampled at the same rates or may have gaps. Second, volunteers make mistakes. Beyond innocent mistakes, there are also cases of malicious or purposeful mis-annotation. Thus, it is desirable to obtain several trajectories
 of the same ant for each period of time. Another difficulty is that since we
 cannot predetermine the identity of each ant, we cannot fit the annotations to specific ants. This fact complicates
@@ -146,17 +151,17 @@ ultimate goal is to identify the complete trajectories of the ants, our work foc
 While we use prior work that is appropriate for our needs for items 1 and
 2, we devised new techniques for items 3 and 4. We note that these techniques are
 not limited to our ant system, and can be useful for other systems that process
-trajectories \TODO{give examples}.
+trajectories \todo{give examples}.
 
 To find matching trajectories, we use the Kuhn–Munkres algorithm
 algorithm~\cite{hung} after computing distances between the common routes.
 However, computing the distance measure is costly, and in particular redundant if one can disqualify the pairing potential of far trajectories
 Fast. We use two complementary techniques to quickly filter out far enough
 trajectories: locality sensitive hashing (LSH) and R-tree augmentation. Locality Sensitive Hashing (LSH) filters out far
-trajectories, but due to its nature it may skip some pairs (see Section~\ref{SSS} for more details).\TODO{Say why LSH skips in its section}. Augmentation of the well-known R-tree algorithm helps us further disqualify far trajectories that were skipped by LSH.
+trajectories, but due to its nature it may skip some pairs (see Section~\ref{SSS} for more details).\todo{Say why LSH skips in its section}. Augmentation of the well-known R-tree algorithm helps us further disqualify far trajectories that were skipped by LSH.
 
 There are many applications that can benefit from a speed up
-heuristic of this type. \TODO{examples} In some of these applications the trajectory of the same
+heuristic of this type. \todo{examples} In some of these applications the trajectory of the same
 moving object is measured using different devices, requiring the data to be merged into
 a single trajectory to get more reliable and accurate data. Other examples that could benefit
 from overlaying data from several sources are ones that use GPS
@@ -164,7 +169,7 @@ data, in which the data is not reliable (e.g., at dense forests or under water) 
 data coming from WiFi and cellular networks.
 
 To compute the distance measure between trajectories, we use the popular
-\Frechet{} distance \TODO{cite}. The \Frechet{} distance is computed for two trajectories,
+\Frechet{} distance \todo{cite}. The \Frechet{} distance is computed for two trajectories,
 ignoring their associated timestamps. Clearly, there are cases when we might be interested in computing this distance when some of the samples are
 associated with a timestamp and some are not (see Section~\ref{sec:ptas}).
 We augmented the \Frechet{} distance computation to support this kind
@@ -223,21 +228,21 @@ image processing tasks, such as the Galaxy Zoo project in which thousands of cit
 millions of images of galaxies from the Hubble Deep Sky Survey and FoldIt in which online gamers
 helped to decode the structure of an AIDS protein~--- a problem which stumped researchers for 15 years.
 
-A similar approach has been recently applied for 
+A similar approach has been recently applied for
 extracting accurate ant trajectories from many (inaccurate) input
-trajectories contributed by citizen scientists~\cite{ants}. Although there are many generic 
-software tools for motion tracking and specific ones for insect tracking, even untrained humans 
+trajectories contributed by citizen scientists~\cite{ants}. Although there are many generic
+software tools for motion tracking and specific ones for insect tracking, even untrained humans
 are better at this task. In this setting, volunteers (citizen scientists) interact with
 an online game showing a video of an ant colony; the goal is
 to generate a trajectory of a specified ant via mouse clicks.
 Unfortunately, the method suggested in \cite{ants} has several limitations.
 (say that there are errors and we need several people tracking the same ant)
 First, it relies on the assumption that all the contributed trajectories
-span the entire video, while in practice it is likely that citizen scientists 
+span the entire video, while in practice it is likely that citizen scientists
 track ants only during short video segments. Hence, in order to
 reconstruct a complete ant trajectory, one needs to stitch together
 short pieces of overlapping trajectories; see Fig.~\ref{fig:stitch}.
-Second, 
+Second,
 
 Equivalently, given partially
 overlapping trajectories, the problem is to identify trajectories
@@ -606,7 +611,7 @@ curves to improve the computation.
 
 \subsection{Locality-Sensitive Hashing}
 \label{sec:locality}
-\TODO{extend it to other settings}
+\todo{extend it to other settings}
 
 \paragraph{TAS}
 Let us consider the scenario in which timestamps are available. We improve the running time of the
@@ -691,11 +696,11 @@ We want to combine and compute median trajectories from a set of smaller pieces;
 
 \subsection{Matching using Sequential Bounding Box Balanced Tree}
 \label{sec:bottleneck}
-\TODO{Need to say something about the two possible matching algorithms we used.}
-\TODO{need an experimental evidence that the approach helps.}
+\todo{Need to say something about the two possible matching algorithms we used.}
+\todo{need an experimental evidence that the approach helps.}
 
 In this section we describe how to match the trajectories from both
-sets \TODO{Rephrase to clarify what those sets are} based on their similarity.
+sets \todo{Rephrase to clarify what those sets are} based on their similarity.
 Formally, we want to find a matching $M = \{m_1, \dots, m_n\}$, where $m_k = (u^i, v^j), 1\le k\le n$ with $u^i \in S_1, v^j \in S_2$ and each trajectory
 is matched exactly once. Ideally, a good matching identifies pairs of trajectories that belong to the same entity.
 To this end, we are looking for a matching that minimizes the maximum distance between matched trajectories.
@@ -726,7 +731,7 @@ is applicable for NTAS and PTAS (but not for TAS). Its main usage is to bound ea
 trajectory in a hierarchical fashion. In the following, we assume that a
 bounding box is always axis-aligned.
 
-%\TODO{bottleneck matching, as defined, produces poor results; need to compute
+%\todo{bottleneck matching, as defined, produces poor results; need to compute
 %a lexicographic bottleneck matching}
 
 \begin{figure}[htb]
