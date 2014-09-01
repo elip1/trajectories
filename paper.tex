@@ -14,8 +14,6 @@
 \DontPrintSemicolon
 \SetArgSty{}
 
-%\newcommand{\TODO}[1]{\textcolor{red}{(#1)}}
-
 \newcommand{\reals}{{\textit I\!\hspace{-0.025em} R}}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -28,16 +26,17 @@
 
 \newcommand{\Frechet}[0]{Fr\'{e}chet}
 \newcommand{\TMATCH}{\textsc{TMATCH}}
+\newcommand{\TM}{\textsc{Trajectory Mosaicing}\xspace}
 
 \title{Trajectory Mosaicing}
 
-\author{E.~Packer%\inst{1}
+\author{Eli Packer%\inst{1}
 \and
-S.~Pupyrev%\inst{2}
+Sergey Pupyrev%\inst{2}
 \and
-A.~Efrat%\inst{2}
+Alon Efrat%\inst{2}
 \and
-S.~Kobourov%\inst{2}
+Stephen G. Kobourov%\inst{2}
 }
 
 %\institute{
@@ -69,36 +68,14 @@ to be used in many systems that require trajectory analysis. In particular, syst
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-[Explain the idea of Mosaicing.]
-Due to the availability of location enabled devices, data with spatial attributes has become more and more widespread, increasing the demand for analytical tools.
-Numerous technologies are available to provide location data, including GPS, WiFi, cellolar and cameras. Moreover, many applications that make use of this location data have been developed and are available for mobile phones, navigation systems, and more.
-
-\todo{Clearly state the problem here and the importance of your results}
-
-{\it Trajectories} are arguably the most interesting pieces of information created by location services.
-\todo{Move the details to a subsequent section} Let a {\em trajectory} be defined as a polyline in $\reals^2$, represented by
-a sequence $p_1, \dots, p_m$ of $m$ points. In addition to the spatial
-coordinates, temporal information might also be available.
-Specifically, each point $p_i$ is associated with a normalized timestamp $0 \le t_i \le 1$ and we assume that the
-trajectory is monotone in time: for each $1 < i < j < T$, it holds $t_1 = 0 < t_i < t_j < t_T = 1$. Hence, a
-trajectory can be viewed as a monotone (with respect to time) polyline in the
-$\reals^3$ domain with the coordinates $x$, $y$ and $t$.
-In our settings, we usually parameterize (or normalize) the timestamp along the
-interval $[0, 1]$.
-%A \emph{distance} between a pair of trajectories is defined as the maximum
-% distance between the corresponding polylines at any timestamp. Let $u,v$ be a pair of trajectories, and $D(u(t), v(t))$ denote the distance
-%between $u$ and $v$ at the timestamp $t$. Then the distance between $u$ and $v$
-% is $$D(u, v) = \max_{t \in [0,1]} D(u(t), v(t)).$$
-
+Trajectories are arguably the most interesting pieces of information created by location services.
 Many applications use the trajectory data as historical resources, including statistics about outdoor activities,
 common route analysis, and traffic congestion analysis. Other applications use the data on-the-fly for current route
 statistics, the analysis of  current relationships with other trajectories, and more.
 Trajectories for ships, airplanes, animals, and even people are constantly being collected
 and used in academic and industrial research.
 
-The availability of trajectory data offer unique opportunities to gain insight. For example, analyzing the complicated relationships
-among trajectories can help alleviate traffic congestion and thus save time and money, while decreasing pollution.
-%Another related problem is route optimization. Given the source and destination, it could be valuable to decide both the route taken by the vehicles as well as scheduling its route stations. Last but not least, today's available communication allows real time transportation on demand (taxis, merchandize shipping, emergency vehicles, etc.). Given services and requests, it would be important to optimize the routes and their scheduling in real-time.
+The availability of trajectory data offer unique opportunities to gain insight. For example, analyzing the complicated relationships among trajectories can help alleviate traffic congestion and thus save time and money, while decreasing pollution.
 Trajectory data can also be used to examine human mobility and social patterns~\cite{isaacman10}. Such understanding can,
 in turn, help advance solutions to large-scale societal problems in fields as varied as telecommunications, ecology,
 epidemiology, and urban planning. For example, knowing how large populations of people move about can help determine their carbon footprint and subsequently guide policies intended to reduce that footprint.
@@ -111,42 +88,83 @@ Over the years, many problems that relate to trajectories have been proposed and
 solved. Four common problems relate to: measuring the distances
 between pairs of trajectories, matching sets of trajectories, clustering
 trajectories, and computing common routes. These problems have been
-extensively investigated in recent years (see Section~\ref{sec:rel}). In
+extensively investigated in recent years. In
 this work we present a system whose major aspect revolves around trajectory
 analysis and unites the above common problems. We describe the system in
 detail in Section~\ref{sec:ant}. The objective of this system is to extract
 trajectories of ants that live in a specific colony for scientific research and stitch –- or mosaic -- together pieces of information from various trajectories to build a more complete picture that can be used for insightful analysis.
 
-Ant trajectories are generally extracted by volunteers who annotate (possibly inaccurate)
-input trajectories (for more details refer to~\cite{ants}). In this setting, the
-volunteers interact with an online game that plays a video of an ant colony and
-annotate the trajectory of specified ants via mouse clicks. This task is
-challenging for computer vision due to the density and the interactions and collisions of the ants. Unfortunately, the trajectories annotated by the volunteers are not quite useful for
-further processing. First, the required trajectories span long periods
-of time, which are much longer than a typical volunteer would be able to comfortably annotate. Hence, we need
-to stitch together different annotated section. This requires allowing some overlap to enable the stitching.
-Moreover, since the volunteers have some control over the annotation process, their
-annotations may not be sampled at the same rates or may have gaps. Second, volunteers make mistakes. Beyond innocent mistakes, there are also cases of malicious or purposeful mis-annotation. Thus, it is desirable to obtain several trajectories
-of the same ant for each period of time. Another difficulty is that since we
-cannot predetermine the identity of each ant, we cannot fit the annotations to specific ants. This fact complicates
-our work greatly as we need to decide which annotation belongs to which ant. Since our
-ultimate goal is to identify the complete trajectories of the ants, our work focuses on solving the following problems.
+\subsection{Problem Description}
+\label{sec:ant}
+Our motivation comes from biologists who wish to discover longitudinal
+behavioral patterns in ant colonies. The trajectories of individual ants in a colony extracted from videos are
+needed to answer questions such as how often do ants communicate, what different roles do ants play in
+a colony, and how does interaction and communication affect the success or failure of a colony? 
+
+On one hand, existing automated solutions for extracting trajectories are not good enough, and there 
+is only so much data that even motivated students can annotate in the research lab.
+On the other hand, in the last few years it has been shown that citizen scientists can contribute to
+image processing tasks, such as the Galaxy Zoo project in which thousands of citizen scientists labeled
+millions of images of galaxies from the Hubble Deep Sky Survey, 
+and FoldIt in which online gamers
+helped to decode the structure of an AIDS protein~--- a problem which stumped researchers for 15 years.
+Such an approach has been recently applied for
+extracting accurate ant trajectories from many (inaccurate) input
+trajectories contributed by citizen scientists~\cite{ants}. 
+In this setting, volunteers 
+(citizen scientists) interact with
+an online game showing a video of an ant colony; the goal is
+to generate a trajectory of a specified ant via mouse clicks.
+Unfortunately, the method suggested in \cite{ants} has several limitations.
+First, volunteers may make mistakes. Beyond innocent mistakes, there are cases of malicious or purposeful mis-annotation. Hence, it is desirable to collect several user trajectories of the same and then compute
+a consensus (``average'') trajectory.
+Second, the method of relies on the assumption that all the contributed trajectories
+span the entire video. However in practice citizen scientists are able to
+track ants only during short video segments. Thus, in order to
+reconstruct a complete ant trajectory, one needs to stitch together
+short pieces of overlapping trajectories; see Figure~\ref{fig:stitch}.
+
+In this paper, we extend and make practical the citizen science approach presented in \cite{ants}.
+Let a {\em trajectory} be defined as a polyline in $\reals^2$, represented by
+a sequence $p_1, \dots, p_m$ of $m$ points. 
+\todo{make $m$ different for diff ants}
+In addition to the spatial
+coordinates, temporal information is also available.
+Each point $p_i=(x_i,y_i)$ is associated with a timestamp $0 \le t_i \le 1$ and every
+trajectory is monotone in time: for each $1 < i < j < T$, it holds $t_1 = 0 < t_i < t_j < t_T = 1$. (Hence, a
+trajectory can be viewed as a monotone (with respect to time) polyline in
+$\reals^3$ with the coordinates $x$, $y$ and $t$).
+Formally, we consider the following problem, which we call \TM:
+Given a set of partially overlapping trajectories, the goal is to identify complete trajectories
+corresponding to every ant; see Figure~\ref{fig:stitch}.
+\todo{make the problem ant-independent}
+Notice the difficulty here: as the trajectories come from our online game, a correspondence between
+ants and their (partial) trajectories is not part of the input.
+
+\begin{figure}[htb]
+\centering
+    \includegraphics[height=5cm]{pics/stitching}
+	\caption{The input (left) is a set of red and blue trajectories. Trajectories of the same color span the same time period. The result (right) is combined black trajectories spanning the entire time period.}
+	\label{fig:stitch}
+\end{figure}
+
+We solve the problem in three steps:
 
 \begin{enumerate}
   \item {\bf Clustering trajectories.} Cluster the trajectories so that each
   cluster corresponds to a specific ant. In this regard, we relate to
   trajectories for a similar period of time.
-  \item {\bf Computing common route.} After the trajectories have been clustered,
+  \item {\bf Computing a common route.} After the trajectories have been clustered,
   we need to compute a common route that represents the trajectories of the ants during
   specific periods of time.
   \item {\bf Matching trajectories.} To generate the complete trajectories, we
   must decide which sub-trajectories to stitch together for specific periods of
-  time.
-  We do this by matching the common routes on the overlapping parts.
-  \item {\bf Measuring the distance between trajectories.} In order to cluster
-  and match the trajectories, we need to use a metric that measures their
-  distances from each other.
+  time. We do this by matching the common routes on the overlapping parts.
 \end{enumerate}
+
+Out algorithms work in two setting. We also need two tools: distance computation and LSH.
+\todo{complete it}
+
 
 While we use prior work that is appropriate for our needs for items 1 and
 2, we devised new techniques for items 3 and 4. We note that these techniques are
@@ -177,23 +195,6 @@ of data and thus generalize the computation. Because the ant trajectory data has
 we show how we can interpolate the trajectories with samples that have no timestamp
 and achieve potentially better distance quality.
 
-% In some scenarios, objects do not share identities. This could be due to privacy, security, or other reasons. Then the task of merging data
-% from several source becomes more challenging as the the trajectories cannot be matched by merely checking their identities.
-% There are applications that make good use of trajectory matching, such as calibrating two video cameras (direction, focal length, etc.)
-% whose goal is to track the same object.
-% The problem of matching pairs of trajectories naturally arises in the context of extracting accurate  trajectories of ants from many
-% (possibly inaccurate) input trajectories annotated by volunteers (citizen scientists)~\cite{ants}. In this setting, the volunteers play
-% an online game showing a video of an ant colony and indicate the trajectory of specified ants via mouse clicks (a task that is commonly
-% challenging for computer vision techniques).
-% To increase the reliability of such annotation, each ant's trajectory is annotated by two or more scientists. Hence, a robust algorithm
-% for determining which trajectories (annotated by different citizen scientists) refer to the same ant is needed.
-
-%In several situations multiple sources produce trajectory data (see Section~\ref{sec:appl} for examples). In many cases, the trajectories is simply a collection of location and (possibly) timestamps, where no ID is associated with it. Matching trajectories that belong to the same route of the specific entity may be important for several purposes: validation, noise reduction, MORE? However, when IDs are unknown and where the two resources do not produce identical information, matching trajectories becomes a challenging task. Minimizing the matching error will be crucial to produce reliable data for subsequent applications.
-
-%While gathering trajectory data with GPS is probably the most common way to collect location samples, it is on one hand limited to outdoor regions, and on the other hand sometimes not precise or %unavailable. Fortunately, there are other kinds of location-aware resources, such as WIFI, RFID and cellolar that are probably more interesting to be used indoors, but might also be available %outdoors. Nonetheless, there are other ourtdoor satellite based location services such as GLONASS, GALILEO and Beidou that are basically competitors to the common GPS.
-
-%Having multiple locating technologies available may be utilized to decrease the level of uncertainty in the data as the location signals are noisy and sometimes get lost. Having more than one source, it may be possible to use statistical heuritics to increase the lcoation confidence level (for instance taking the average location). Moreover, when trajectories are given, it will be more useful to apply statistical methods on the trajectories rather then working on the samples separetly. The main reason is that the effect of a sudden and short term noise will decrease when treated as a trajectory datum.
-
 % In this paper we propose novel methods for computing a good matching between two sets of trajectories.
 % On a high level, the task is divided into two parts: computing a similarity measure between a pair of trajectories and partitioning
 % the trajectories into pairs in a way that optimizes some criteria. We define a
@@ -206,6 +207,7 @@ and achieve potentially better distance quality.
 %  matching~--- a perfect matching that minimizes the maximum weight of a matched
 %  edge~\cite{Efrat01}. To this end, we suggest an algorithm in which computation of the \Frechet{} distance is optimized.
 
+
 The remainder of this paper is organized as follows. In the next section we discuss related work.
 In Section~\ref{sec:ant} we present the
 system that analyzes ant trajectories. In Section~\ref{sec:tec} we present
@@ -214,78 +216,6 @@ show how we solve the main problem that is described in Section~\ref{sec:ant}.
 In particular, we describe how we cluster the trajectories, compute their common
 Routes, and match the latter to create the final results.
 In Section~\ref{sec:exper} we provide experimental results and present several applications. We conclude and discuss directions for future work in Section~\ref{sec:conc}.
-
-\subsection{Problem Description}
-\label{sec:ant}
-Our motivation comes from biologists who wish to discover longitudinal
-behavioral patterns in ant colonies. The trajectories of individual ants in a colony extracted from videos are
-needed to answer questions such as how often do ants communicate, what different roles do ants play in
-a colony, and how does interaction and communication affect the success or failure of a colony? Existing
-automated solutions are not good enough, and there is only so much data that even motivated students can
-annotate in the research lab.
-In the last few years it has been shown that citizen scientists can contribute to
-image processing tasks, such as the Galaxy Zoo project in which thousands of citizen scientists labeled
-millions of images of galaxies from the Hubble Deep Sky Survey and FoldIt in which online gamers
-helped to decode the structure of an AIDS protein~--- a problem which stumped researchers for 15 years.
-
-A similar approach has been recently applied for
-extracting accurate ant trajectories from many (inaccurate) input
-trajectories contributed by citizen scientists~\cite{ants}. Although there are many generic
-software tools for motion tracking and specific ones for insect tracking, even untrained humans
-are better at this task. In this setting, volunteers (citizen scientists) interact with
-an online game showing a video of an ant colony; the goal is
-to generate a trajectory of a specified ant via mouse clicks.
-Unfortunately, the method suggested in \cite{ants} has several limitations.
-(say that there are errors and we need several people tracking the same ant)
-First, it relies on the assumption that all the contributed trajectories
-span the entire video, while in practice it is likely that citizen scientists
-track ants only during short video segments. Hence, in order to
-reconstruct a complete ant trajectory, one needs to stitch together
-short pieces of overlapping trajectories; see Fig.~\ref{fig:stitch}.
-Second,
-
-Equivalently, given partially
-overlapping trajectories, the problem is to identify trajectories
-corresponding to the same ant; see Fig.~\ref{fig:ex1}.
-
-\begin{figure}[htb]
-\centering
-    \includegraphics[height=5cm]{pics/stitching}
-	\caption{The input (left) is a set of red and blue trajectories. Trajectories of the same color span the same time period. The result (right) is combined black trajectories spanning the entire time period.}
-	\label{fig:stitch}
-\end{figure}
-
-
-Ant trajectories are generally extracted by volunteers who annotate (possibly inaccurate)
-input trajectories (for more details refer to~\cite{ants}). In this setting, the
-volunteers interact with an online game that plays a video of an ant colony and
-annotate the trajectory of specified ants via mouse clicks. This task is
-challenging for computer vision dur to the density and the interactions and collisions of the ants. Unfortunately, the trajectories annotated by the volunteers are not quite useful for
-further processing. First, the required trajectories span long periods
-of time, which are much longer than a typical volunteer would be able to comfortably annotate. Hence, we need
-to stitch together different annotated section. This requires allowing some overlap to enable the stitching.
-Morever, since the volunteers have some control over the annotation process, their
-annotations may not be sampled at the same rates or may have gaps. Second, volunteers make mistakes. Beyond innocent mistakes, there are also cases of malicious or purposeful mis-annotation. Thus, it is desirable to obtain several trajectories
-of the same ant for each period of time. Another difficulty is that since we
-cannot predetermine the identity of each ant, we cannot fit the annotations to specific ants. This fact complicates
-our work greatly as we need to decide which annotation belongs to which ant. Since our
-ultimate goal is to identify the complete trajectories of the ants, our work focuses on solving the following problems.
-
-\begin{enumerate}
-  \item {\bf Clustering trajectories.} Cluster the trajectories so that each
-  cluster corresponds to a specific ant. In this regard, we relate to
-  trajectories for a similar period of time.
-  \item {\bf Computing common route.} After the trajectories have been clustered,
-  we need to compute a common route that represents the trajectories of the ants during
-  specific periods of time.
-  \item {\bf Matching trajectories.} To generate the complete trajectories, we
-  must decide which sub-trajectories to stitch together for specific periods of
-  time.
-  We do this by matching the common routes on the overlapping parts.
-  \item {\bf Measuring the distance between trajectories.} In order to cluster
-  and match the trajectories, we need to use a metric that measures their
-  distances from each other.
-\end{enumerate}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,7 +231,7 @@ hand in hand, since any spatial clustering algorithm depends on the measure of s
 
 Partitioning trajectories into clusters is interesting for various applications
 such as prediction, classification, identification of common patterns, computation of the mean
-trajectory, or identification of data characteristics ~\cite{Sankar2013}.
+trajectory, or identification of data characteristics~\cite{Sankar2013}.
 In many cases it is interesting to cluster sub-trajectories. Lee et al.~\cite{Lee07trajectoryclustering}
 proposed a technique to segment the trajectories into a set of line segments and
 then group similar line segments. The distance function the define for the segments
@@ -436,10 +366,10 @@ and failures. They introduce a variant of the edit distance measure that stands 
 
 
 
-\section{Techniques for Processing Trajectories}
+\section{Preliminaries}
 \label{sec:tec}
 
-\subsection{Distance Measures}
+\subsection{Distance Computation}
 \label{sec:dist}
 To measure the distance between two trajectories, we chose a metric that relates to the maximum distances along them. We distinguish among three cases, each relates to the availability of
 timestamps on trajectory samples. In the first case, timestamps are not
@@ -449,7 +379,7 @@ Note that for ant trajectories, the time is generally available on the samples a
 precision with PTAS, which is based on NTAS.
 We also describe other scenarios in which PTAS is useful.
 
-\subsubsection{No Time Associated Setting (NTAS)}
+\paragraph{No Time Associated Setting (NTAS)}
 \label{sec:ntas}
 When the time is not given, the common \Frechet{} distance is a suitable
 Measure for the distance of the trajectories.
@@ -473,7 +403,7 @@ points; see Fig.~\ref{fig:conf}.
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.75\linewidth]{pics/conf_space2_with_path.jpg}
+	\includegraphics[width=0.35\linewidth]{pics/conf_space2_with_path.jpg}
 	\caption{The free space diagram for trajectories $A$ and $B$ and some fixed $\gamma$. The valid regions are in white. The blue monotone path shows one way
 to parameterize the curves so the distance between any two matched points is always less than $\gamma$.
 }
@@ -520,7 +450,7 @@ As the discrete version is faster to compute and easier to implement than
 the continuous one, we use it in the remainder of
 this work.
 
-\subsubsection{Time Associated Setting (TAS)}
+\paragraph{Time Associated Setting (TAS)}
 \label{sec:tas}
 When timestamps are associated with the trajectory samples, trajectories can be
 represented as polylines in $\reals^3$ (with $x, y$ and $t$ coordinates).
@@ -530,7 +460,7 @@ such pair, we compute the maximum distance. The maximum value obtained over all
 pairs of segments is the similarity measure of the trajectories. It is easy to
 verify that the processing time is linear on the trajectory sizes as we traverse both trajectories simultaneously once.
 
-\subsubsection{Partial Time Associated Setting (PTAS)}
+\paragraph{Partial Time Associated Setting (PTAS)}
 \label{sec:ptas}
 This case is a generalization of TAS and NTAS. Here a point along an input trajectory may or may not be associated
 with a timestamp. The idea is to solve this variant by modifying the
@@ -558,7 +488,7 @@ top-left of the free space respectively; see Fig.~\ref{fig:rects}.
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.98\linewidth]{pics/forb_rect2.jpg}
+	\includegraphics[width=0.5\linewidth]{pics/forb_rect2.jpg}
 	\caption{The free space diagram for a pair of trajectories $a$ and $b$ overlayed with forbidden
 	rectangles (in green) that contribute to the invalid parameterization (the red
 	areas). The parameterization of the trajectories are depicted below.}
@@ -684,17 +614,17 @@ Pre-computing  $s_{0..M}=\sum_{ j =1,3,5\cdots}^{M-1} \gamma_j $ and $\bar s_{0.
 
 \end{enumerate}
 
-\section{Matching Algorithm}
+\section{Trajectory Mosaicing}
 \label{sec:alg}
 
-\subsection{Clustering}
+\subsection{Trajectory Clustering}
 \label{sec:clus}
 
-\subsection{Common Route}
+\subsection{Computing a Common Route}
 \label{sec:common}
 We want to combine and compute median trajectories from a set of smaller pieces; see Fig.~\ref{fig:stitch}.
 
-\subsection{Matching using Sequential Bounding Box Balanced Tree}
+\subsection{Trajectory Matching}
 \label{sec:bottleneck}
 \todo{Need to say something about the two possible matching algorithms we used.}
 \todo{need an experimental evidence that the approach helps.}
@@ -833,10 +763,10 @@ in practice, as discussed in Section~\ref{sec:exper}.
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.49\linewidth]{pics/sq1_with_path.jpg}
-	\includegraphics[width=0.49\linewidth]{pics/sq3_with_path.jpg}
-	\includegraphics[width=0.49\linewidth]{pics/sq5_with_path.jpg}
-	\includegraphics[width=0.49\linewidth]{pics/sq4_with_path.jpg}
+	\includegraphics[width=0.24\linewidth]{pics/sq1_with_path.jpg}
+	\includegraphics[width=0.24\linewidth]{pics/sq3_with_path.jpg}
+	\includegraphics[width=0.24\linewidth]{pics/sq5_with_path.jpg}
+	\includegraphics[width=0.24\linewidth]{pics/sq4_with_path.jpg}
 	\caption{Computing the \Frechet{} distance with SBBBT.
 Decreasing levels (from top-left clockwise) of SBBBT are depicted on the parameterization diagram for a pair of trajectories. Red cells
 represent forbidden parameterization values. In this example, there is a
@@ -957,9 +887,9 @@ trajectories per input.
 
 \begin{figure}[h!] 	
 	\centering
-	\includegraphics[width=0.75\linewidth]{pics/helTrajs}
+	\includegraphics[width=0.45\linewidth]{pics/helTrajs}
 ~~~
-	\includegraphics[width=0.75\linewidth]{pics/roterdamTrajs}
+	\includegraphics[width=0.45\linewidth]{pics/roterdamTrajs}
 	\caption{The trajectories we experimented with: Helsinki public transportation (top) and Ships near and at the port of Rotterdam (bottom).} 	
 	\label{fig:trajs}
 \end{figure}
@@ -982,8 +912,10 @@ fact that larger noise results in more pairs of trajectories that can be
 potentially matched to each other.
 
 \begin{figure}[h!]
+\center
 	\subfigure[]{
     \includegraphics[width=0.42\textwidth]{pics/result_helCompTime_new}}
+\hfill
 	\subfigure[]{
     \includegraphics[width=0.42\textwidth]{pics/result_rotCompTime_new}}
 	\caption{The running time of the bottleneck matching algorithm on the
@@ -1004,8 +936,10 @@ the \Frechet{} distance is done only for $\le 2-5\%$ of all pairs. This
 corresponds to the $20-50x$ speedup compared to the brute-force algorithm.
 
 \begin{figure}[h!]
+\center
 	\subfigure[]{
     \includegraphics[width=0.42\textwidth]{pics/result_helFretCompRel_new}}
+\hfill    
 	\subfigure[]{
     \includegraphics[width=0.4\textwidth]{pics/result_rotFretCompRel_new}}
 	\caption{The saving ratio of the bottleneck matching algorithm on the
@@ -1051,7 +985,7 @@ Fig.~\ref{fig:square}.
 
 \begin{figure}[h!] 	
 	\centering
-	\includegraphics[width=0.6\linewidth]{pics/squareTrajs.png} 	
+	\includegraphics[width=0.4\linewidth]{pics/squareTrajs.png} 	
 	\caption{An example of two pairs of generated trajectories inside a square. Each pair is colored with a specific color.} 		 \label{fig:square}
 \end{figure}
 
@@ -1078,6 +1012,7 @@ input size (the number of trajectories). This explains the linear growth
 of the running time in Fig.~\ref{fig:square_stat}.
 
 \begin{figure}[h!]
+\center
     \includegraphics[width=0.42\textwidth]{pics/boxtime1_new}
 %	\subfigure[]{
 %    \includegraphics[width=0.48\textwidth]{pics/boxtime2_new}}
@@ -1096,7 +1031,8 @@ Not surprisingly, the precision is lower for inputs with larger noise, and
 it decreases faster for inputs with more trajectories.
 Note, however, that the precision remains steadily over $95\%$ for the entire dataset if $r\le 2$.
 
- \begin{figure}[h!]
+\begin{figure}[h!]
+\center
     \includegraphics[width=0.48\textwidth]{pics/prec_charts_new}
 	\caption{Precision of the results for the Artificial Trajectories dataset.}
 	\label{fig:preci}
@@ -1109,6 +1045,25 @@ Note, however, that the precision remains steadily over $95\%$ for the entire da
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion and Discussion}
 \label{sec:conc}
+\todo{discuss further motivations and applications}
+% In some scenarios, objects do not share identities. This could be due to privacy, security, or other reasons. Then the task of merging data
+% from several source becomes more challenging as the the trajectories cannot be matched by merely checking their identities.
+% There are applications that make good use of trajectory matching, such as calibrating two video cameras (direction, focal length, etc.)
+% whose goal is to track the same object.
+% The problem of matching pairs of trajectories naturally arises in the context of extracting accurate  trajectories of ants from many
+% (possibly inaccurate) input trajectories annotated by volunteers (citizen scientists)~\cite{ants}. In this setting, the volunteers play
+% an online game showing a video of an ant colony and indicate the trajectory of specified ants via mouse clicks (a task that is commonly
+% challenging for computer vision techniques).
+% To increase the reliability of such annotation, each ant's trajectory is annotated by two or more scientists. Hence, a robust algorithm
+% for determining which trajectories (annotated by different citizen scientists) refer to the same ant is needed.
+
+%In several situations multiple sources produce trajectory data (see Section~\ref{sec:appl} for examples). In many cases, the trajectories is simply a collection of location and (possibly) timestamps, where no ID is associated with it. Matching trajectories that belong to the same route of the specific entity may be important for several purposes: validation, noise reduction, MORE? However, when IDs are unknown and where the two resources do not produce identical information, matching trajectories becomes a challenging task. Minimizing the matching error will be crucial to produce reliable data for subsequent applications.
+
+%While gathering trajectory data with GPS is probably the most common way to collect location samples, it is on one hand limited to outdoor regions, and on the other hand sometimes not precise or %unavailable. Fortunately, there are other kinds of location-aware resources, such as WIFI, RFID and cellolar that are probably more interesting to be used indoors, but might also be available %outdoors. Nonetheless, there are other ourtdoor satellite based location services such as GLONASS, GALILEO and Beidou that are basically competitors to the common GPS.
+
+%Having multiple locating technologies available may be utilized to decrease the level of uncertainty in the data as the location signals are noisy and sometimes get lost. Having more than one source, it may be possible to use statistical heuritics to increase the lcoation confidence level (for instance taking the average location). Moreover, when trajectories are given, it will be more useful to apply statistical methods on the trajectories rather then working on the samples separetly. The main reason is that the effect of a sudden and short term noise will decrease when treated as a trajectory datum.
+
+
 We presented a novel approach for matching trajectories generated by two independent
 resources. We considered three scenarios:
 (1)~timestamps are associated with the points of the trajectories, (2)~timestamps are missing, and (3)~some of the points include timestamps.
